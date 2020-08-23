@@ -18,14 +18,17 @@ namespace AsinkAweight.ConsoleDemo
 
         static async void AsyncMain()
         {
-            var thing = await MyDummyAsyncFn();
-
+            Console.WriteLine("Hi, what's your name?");
+            var name = await GetNameAsink();
+            Console.WriteLine($"And what is your friend's name?");
+            var friend = await GetNameAsink();
+            Console.WriteLine($"Hi, {name} and {friend}!");
             done = true;
         }
 
-        static Tusk<string> MyDummyAsyncFn()
+        static Tusk<string> GetNameAsink()
         {
-            throw new NotImplementedException();
+            return Tusk<string>.FromResult("Neil");
         }
     }
 }

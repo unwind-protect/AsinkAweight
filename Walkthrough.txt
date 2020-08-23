@@ -30,3 +30,23 @@ compile-time duck-typing by calling ".GetAwaiter()" on the result of someOperati
 In this experiment, "Tusk<T>" is the equivalent of "Task<T>" and "Aweighter<T>" is the 
 result of calling "Tusk<T>.GetAwaiter()".
 
+
+2: Stage Two - something that runs! (ish!)
+------------------------------------------
+
+The easiest way to return from an asychronous task is not to be asynchronous at all! 
+Normally, that's done via "Task<T>.FromResult(...)" - here, "Tusk<T>.FromResult(...)"
+will perform the same job.  To do this, we have to flesh out Tusk and Aweighter:
+Tusk needs some way of recording whether the operation has completed and the result,
+and Aweighter needs to be connected to the Tusk.  Much like in Main, I've written 
+GetResult to poll if the result isn't currently available; and I've fleshed out the test 
+to perform two asynchronous operations sequentially.
+
+The code in AsyncMain and GetNameAsink is rewritten by the compiler into classes 
+implementing a state machine that steps through the code as operations complete. Part of
+this implementation is a "Happy path" optimisation where, if an operation is already
+marked as completed, it will continue with the rest of the function straightaway rather
+than queuing it for later - this is why we don't need to define the method
+"Aweighter<T>.OnCompleted(...)" quite yet.
+
+

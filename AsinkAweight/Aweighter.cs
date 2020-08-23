@@ -7,16 +7,24 @@ namespace AsinkAweight
 {
     public class Aweighter<T>: INotifyCompletion
     {
-        public bool IsCompleted => throw new NotImplementedException();
+        private Tusk<T> _tusk;
+
+
+        public Aweighter(Tusk<T> tusk)
+        {
+            _tusk = tusk;
+        }
+
+
+        public bool IsCompleted => _tusk.IsCompleted;
+
 
         public void OnCompleted(Action continuation)
         {
             throw new NotImplementedException();
         }
 
-        public T GetResult()
-        {
-            throw new NotImplementedException();
-        }
+
+        public T GetResult() => _tusk.GetResult();
     }
 }

@@ -50,3 +50,25 @@ than queuing it for later - this is why we don't need to define the method
 "Aweighter<T>.OnCompleted(...)" quite yet.
 
 
+3: Asychronous operations get real!
+-----------------------------------
+
+The most common reason for using/ needing asynchronous operations is to deal with I/O.
+While waiting for the device (keyboard, disk, network, etc...) to come back with an
+answer, there's nothing else that the thread can do apart from wait. For the operating 
+system, a "blocking" system call simply won't schedule the thread to run again until
+its result is available.
+
+In this example, we'll use a file watcher to emulate our input device. We'll be watching
+for changes to the "C:\temp\touch.txt" file, and changes to this will be used as the 
+result of our asynchronous function.
+
+In order to get this data returned from an asynchronous task (ah, Tusk!), we'll be using
+a TuskCompletionSource<T> (analogous to a TaskCompletionSource<T>).  This is really 
+handy class for making any sort of asynchronous operation work with async/ await.
+
+The changes we need to the Asink/Aweight library are really quite small. The 
+TuskCompletionSource sets the result on its Tusk by means of internal access to SetResult,
+Aweighter has now to be able to set the continuation Action of the Tusk (again,
+via internal access), and it all Just Works....!
+

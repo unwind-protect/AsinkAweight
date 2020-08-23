@@ -21,7 +21,7 @@ namespace AsinkAweight
 
         public void OnCompleted(Action continuation)
         {
-            throw new NotImplementedException();
+            _tusk.OnCompleted(continuation);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace AsinkAweight.ConsoleDemo
 {
@@ -19,9 +20,9 @@ namespace AsinkAweight.ConsoleDemo
         static async void AsyncMain()
         {
             Console.WriteLine("Hi, what's your name?");
-            var name = await GetNameAsink();
+            var name = await GetNameIOAsink();
             Console.WriteLine($"And what is your friend's name?");
-            var friend = await GetNameAsink();
+            var friend = await GetNameIOAsink();
             Console.WriteLine($"Hi, {name} and {friend}!");
             done = true;
         }
@@ -30,5 +31,25 @@ namespace AsinkAweight.ConsoleDemo
         {
             return Tusk<string>.FromResult("Neil");
         }
+
+        static Tusk<string> GetNameIOAsink()
+        {
+            var tcs = new TuskCompletionSource<string>();
+            FileSystemWatcher iochannel = new FileSystemWatcher("c:\\temp", "touch.txt");
+            iochannel.Changed += (sender, args) => ReadData(sender, tcs);
+            iochannel.EnableRaisingEvents = true;
+            return tcs.Tusk;
+        }
+
+        private static void ReadData(object sender, TuskCompletionSource<string> tcs)
+        {
+            var iochannel = (FileSystemWatcher)sender;
+            iochannel.EnableRaisingEvents = false;
+            iochannel.Dispose();
+
+            var data = File.ReadAllText("c:\\temp\\touch.txt");
+            tcs.SetResult(data);
+        }
+
     }
 }

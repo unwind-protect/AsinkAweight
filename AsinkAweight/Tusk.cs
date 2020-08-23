@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace AsinkAweight
 {
     public class Tusk<T>
     {
         private T _result;
+        private Action _continuation;
 
         public Aweighter<T> GetAwaiter()
         {
@@ -23,6 +25,16 @@ namespace AsinkAweight
 
             _result = val;
             IsCompleted = true;
+
+            _continuation?.Invoke();
+        }
+
+        internal void OnCompleted(Action continuation)
+        {
+            if (_continuation != null)
+                throw new InvalidOperationException("Continuation already set!");
+
+            _continuation = continuation;
         }
 
         internal T GetResult()

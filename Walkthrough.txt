@@ -1,0 +1,32 @@
+AsyncAweight - An Exploratory Async/ Await Implementation
+---------------------------------------------------------
+
+Since C# 8 (-ish), "Task" has had no special meaning to the C# compiler, and all the 
+implementation (except code-rewriting) should be able to be done in "userland" code.
+
+This walkthrough was to see how far we could get! - and how much or little "magic" is 
+involved!
+
+The limitations I set out for the implementation:
+  * Only value-returning operations were to be implemented
+  * Cancellation/ CancellationToken were not to be considered.
+  * Efficiency was not a large concern.
+
+Each stage has been checked in as a separate commit; to see the evolution of the code,
+restore the earliest revision and move forward one revision at a time.
+
+1: First Stage - something that compiles!
+-----------------------------------------
+
+I started off with a pseudo "async main", with a call to a dummy method we'd like to run 
+asynchronously.  The reason for not using the language's recently-provided "async main" 
+functionality was to eliminate as much hidden logic (i.e. "magic"!) as possible.  The 
+polling of "done" for completion is not pretty, and maybe I'll clean that up later.
+
+From there, I implemented methods as the compiler complained about them not existing, 
+until I had a program that compiled.  The syntax "await someOperation()" kicks off some
+compile-time duck-typing by calling ".GetAwaiter()" on the result of someOperation().
+
+In this experiment, "Tusk<T>" is the equivalent of "Task<T>" and "Aweighter<T>" is the 
+result of calling "Tusk<T>.GetAwaiter()".
+

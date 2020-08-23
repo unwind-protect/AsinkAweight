@@ -92,4 +92,34 @@ deal with the rare situation when OnCompleted is called *after* SetResult - norm
 this will hit the "Happy path" optimisation mentioned above, but not always...
 
 
+5: What about WinForms?
+-----------------------
+
+In WinForms (and WPF), actions which update UI elements must run on the UI thread. One
+of the early mechanisms for doing this while using background thread was 
+BackgroundWorker, which automatically marshalled progress updates onto the UI thread.
+Another way of doing this is to use Control.BeginInvoke - this works by posting a 
+message onto the Windows message queue; when this is processed (on the UI thread) it'll
+run the given action.
+
+To make it easy to run async operations from your WinForms control events, and still
+update your UI, the concept of a "SynchronizationContext" was introduced.
+
+The SynchronizationContext describes how continuations of async operations should be run.
+I've taken a slightly simpler approach to doing this than the "real" implementation:
+The static "AsinkAweight.ActionScheduler" class has a static "Current" property to 
+define the current Scheduler, simply as something that can queue actions for execution.
+The implementation to run Actions from the Windows message queue is done in 
+"WindowsMessageQueueScheduler", and set as the current scheduler in the Form1 constructor
+(in the real implementation, this is done when the first Control is created).
+
+I've copied across the implementation of the Console demo code into a simple WinForms
+demo.  You'll still need to interact with it by changing the file, and other than 
+pressing "Start" to begin, and the output appearing in the message pane, the 
+functionality is identical.
+
+If you run this implementation, with breakpoints set on the WriteLine statements, you'll
+see that all of the continuations are run on the UI thread.  Thanks to the magic that is
+async/await, the window remains responsive to mouse events even while running the 
+button code!
 

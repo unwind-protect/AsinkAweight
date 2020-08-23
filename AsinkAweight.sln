@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsinkAweight.ConsoleDemo", "AsinkAweight.ConsoleDemo\AsinkAweight.ConsoleDemo.csproj", "{0CCDFAA8-A743-4039-AAD6-639646A4170A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsinkAweight", "AsinkAweight\AsinkAweight.csproj", "{C10918BC-2A76-4CB2-86A9-E9B02A3D8B00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsinkAweight", "AsinkAweight\AsinkAweight.csproj", "{C10918BC-2A76-4CB2-86A9-E9B02A3D8B00}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsinkAweight.WinForms", "AsinkAweight.WinForms\AsinkAweight.WinForms.csproj", "{E119F3DB-3D3C-4FD4-A631-D2D770446950}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C10918BC-2A76-4CB2-86A9-E9B02A3D8B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C10918BC-2A76-4CB2-86A9-E9B02A3D8B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C10918BC-2A76-4CB2-86A9-E9B02A3D8B00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E119F3DB-3D3C-4FD4-A631-D2D770446950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E119F3DB-3D3C-4FD4-A631-D2D770446950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E119F3DB-3D3C-4FD4-A631-D2D770446950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E119F3DB-3D3C-4FD4-A631-D2D770446950}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -56,16 +56,10 @@ namespace AsinkAweight
             return _result;
         }
 
-        public static void Queue(Action a)
+        private void Queue(Action continuation)
         {
-            ThreadPool.QueueUserWorkItem(Run, a, true);
+            ActionScheduler.Current.Queue(continuation);
         }
-
-        private static void Run(Action a)
-        {
-            a();
-        }
-
         public static Tusk<T> FromResult(T val)
         {
             var tusk = new Tusk<T>();

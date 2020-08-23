@@ -72,3 +72,24 @@ TuskCompletionSource sets the result on its Tusk by means of internal access to 
 Aweighter has now to be able to set the continuation Action of the Tusk (again,
 via internal access), and it all Just Works....!
 
+
+4: Scheduling on the thread pool.
+---------------------------------
+
+It turns out it doesn't quite work as expected.
+
+If you set breakpoints on the Console.WriteLine statements and in ReadData, and view the
+threads and stack, you'll see that the continuation of AsyncMain runs *inside* the call
+to ReadData!  While this might look innocuous, my tests indicated that only one thread
+is allocated for running callbacks for FileSystemWatcher, so if you had another 
+FileSystemWatcher in your code, it wouldn't be able to notify of any changes until this
+code had finished.  What we really want is for any continuation to be run on the thread
+pool.
+
+This is really easy.  We already have the continuation in the form of an Action, and 
+queuing an Action for the threadpool is easy.  The only extra tweak I've made here is to
+deal with the rare situation when OnCompleted is called *after* SetResult - normally,
+this will hit the "Happy path" optimisation mentioned above, but not always...
+
+
+

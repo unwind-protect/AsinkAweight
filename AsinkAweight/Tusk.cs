@@ -26,7 +26,8 @@ namespace AsinkAweight
             _result = val;
             IsCompleted = true;
 
-            _continuation?.Invoke();
+            if (_continuation!=null)
+                Queue(_continuation);
         }
 
         internal void OnCompleted(Action continuation)
@@ -34,7 +35,17 @@ namespace AsinkAweight
             if (_continuation != null)
                 throw new InvalidOperationException("Continuation already set!");
 
-            _continuation = continuation;
+            // It turns out that this can be called after SetResult
+            if (IsCompleted)
+            {
+                // Should we just execute it immediately instead?
+                Queue(continuation);
+            }
+            else
+            {
+                // Warning!  Probably still a race condition!...
+                _continuation = continuation;
+            }
         }
 
         internal T GetResult()
@@ -43,6 +54,16 @@ namespace AsinkAweight
                 System.Threading.Thread.Sleep(100);
 
             return _result;
+        }
+
+        public static void Queue(Action a)
+        {
+            ThreadPool.QueueUserWorkItem(Run, a, true);
+        }
+
+        private static void Run(Action a)
+        {
+            a();
         }
 
         public static Tusk<T> FromResult(T val)

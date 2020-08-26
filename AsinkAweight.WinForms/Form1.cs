@@ -24,9 +24,9 @@ namespace AsinkAweight.WinForms
         private async void startButton_Click(object sender, EventArgs e)
         {
             WriteLine("What is your name?");
-            var name1 = await GetNameIOAsink();
+            var name1 = await GetFormattedNameIOAsink();
             WriteLine("And what is your friend's name?");
-            var name2 = await GetNameIOAsink();
+            var name2 = await GetFormattedNameIOAsink();
             WriteLine($"Hello {name1} and {name2}!");
         }
 
@@ -54,5 +54,25 @@ namespace AsinkAweight.WinForms
             tcs.SetResult(data);
         }
 
+        static private async Tusk<string> GetFormattedNameIOAsink()
+        {
+            var name = await GetNameIOAsink();
+            return FormattedName(name);
+        }
+
+        private static string FormattedName(string name)
+        {
+            var capital = true;
+
+            var array = new char[name.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = capital ? char.ToUpper(name[i]) : char.ToLower(name[i]);
+                capital = char.IsWhiteSpace(array[i]);
+            }
+
+            return new string(array);
+        }
     }
 }

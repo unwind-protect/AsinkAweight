@@ -123,3 +123,25 @@ see that all of the continuations are run on the UI thread.  Thanks to the magic
 async/await, the window remains responsive to mouse events even while running the 
 button code!
 
+6: "async" decorated methods
+----------------------------
+
+If you've been paying attention, you'll have noticed that while we've written a few
+asynchronous methods returning Tusk<T>, none of them are "async Tusk<T>"; if you try
+that, you'll get an error:
+
+"The return type of an async method must be void, Task, Task<T> or a task-like type"
+
+Task-like type? I thought that's what I'd written! :-/
+
+It turns out that in order to use Tusk<T> as a real "Task-like type", the compiler needs
+a little help in driving the code rewriting machinery.  This help takes the form of 
+TuskMethodBuilder<T> and an attribute decoration on Tusk<T> that points at it.
+
+I don't claim to understand half of what is going on here; it's way out of my league
+and I've just managed to fill out enough to get the code to run!
+
+If you now run the test code, you'll see we're able to use async and await in the method 
+GetFormattedNameIOAsink to get a name and then format the result.
+
+

@@ -5,6 +5,7 @@ using System.Threading;
 
 namespace AsinkAweight
 {
+    [System.Runtime.CompilerServices.AsyncMethodBuilder(typeof(TuskMethodBuilder<>))]
     public class Tusk<T>
     {
         private T _result;

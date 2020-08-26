@@ -20,9 +20,9 @@ namespace AsinkAweight.ConsoleDemo
         static async void AsyncMain()
         {
             Console.WriteLine("Hi, what's your name?");
-            var name = await GetNameIOAsink();
+            var name = await GetFormattedNameIOAsink();
             Console.WriteLine($"And what is your friend's name?");
-            var friend = await GetNameIOAsink();
+            var friend = await GetFormattedNameIOAsink();
             Console.WriteLine($"Hi, {name} and {friend}!");
             done = true;
         }
@@ -51,5 +51,26 @@ namespace AsinkAweight.ConsoleDemo
             tcs.SetResult(data);
         }
 
+
+        static private async Tusk<string> GetFormattedNameIOAsink()
+        {
+            var name = await GetNameIOAsink();
+            return FormattedName(name);
+        }
+
+        private static string FormattedName(string name)
+        {
+            var capital = true;
+
+            var array = new char[name.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = capital ? char.ToUpper(name[i]) : char.ToLower(name[i]);
+                capital = char.IsWhiteSpace(array[i]);
+            }
+
+            return new string(array);
+        }
     }
 }

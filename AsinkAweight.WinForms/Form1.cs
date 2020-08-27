@@ -21,18 +21,42 @@ namespace AsinkAweight.WinForms
             ActionScheduler.Current = new WindowsMessageQueueScheduler();
         }
 
-        private async void startButton_Click(object sender, EventArgs e)
+        bool deadlockDemo = false;
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            if (deadlockDemo)
+            {
+                DeadlockDemo();
+            }
+            else
+            {
+                DeadlockDemoFix();
+            }
+
+            deadlockDemo = !deadlockDemo;
+        }
+
+        private void DeadlockDemo()
         {
             WriteLine("What is your name?");
-            var name1 = await GetFormattedNameIOAsink();
-            WriteLine("And what is your friend's name?");
-            var name2 = await GetFormattedNameIOAsink();
-            WriteLine($"Hello {name1} and {name2}!");
+            var name = GetFormattedNameIOAsink().GetAwaiter().GetResult();
+            WriteLine($"Hello {name}!");
         }
+
+        private void DeadlockDemoFix()
+        {
+            WriteLine("What is your name?");
+            var name = GetFormattedNameIOAsinkFixed().GetAwaiter().GetResult();
+            WriteLine($"Hello {name}!");
+        }
+
 
         private void WriteLine(string text)
         {
             textOutput.Text += text + "\r\n";
+            // this is a cheat so we can see the prompt!
+            Application.DoEvents();
         }
 
         static Tusk<string> GetNameIOAsink()
@@ -43,6 +67,7 @@ namespace AsinkAweight.WinForms
             iochannel.EnableRaisingEvents = true;
             return tcs.Tusk;
         }
+
 
         private static void ReadData(object sender, TuskCompletionSource<string> tcs)
         {
@@ -57,6 +82,12 @@ namespace AsinkAweight.WinForms
         static private async Tusk<string> GetFormattedNameIOAsink()
         {
             var name = await GetNameIOAsink();
+            return FormattedName(name);
+        }
+
+        static private async Tusk<string> GetFormattedNameIOAsinkFixed()
+        {
+            var name = await GetNameIOAsink().UseDefaultScheduler();
             return FormattedName(name);
         }
 

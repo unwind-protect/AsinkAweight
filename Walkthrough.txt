@@ -144,4 +144,46 @@ and I've just managed to fill out enough to get the code to run!
 If you now run the test code, you'll see we're able to use async and await in the method 
 GetFormattedNameIOAsink to get a name and then format the result.
 
+7: Deadlocks
+------------
+
+You've probably hit this a some point.  You're deep in some normal, synchronous code,
+and you need to call an async method. You call it, and put ".GetAwaiter().GetResult()"
+on the end so you can use the result immediately, and... nothing happens.
+
+Absolutely nothing.
+
+what has normally happened is that you are deep inside a UI event handler (on the UI
+thread) - when you need the result, you block the UI thread, but the Synchronization
+Context that you kicked the asynchronous event off on *also* requires the UI thread;
+there's a message posted on the Windows message queue waiting to finish it off, but 
+it can't run while you're blocking!
+
+There's a couple of ways of getting around this.  The "recommended" way is to use 
+".ConfigureAwait(false)".  All this does is say that, rather than returning to the 
+current synchronization context (currently the winforms one), you're happy to use the 
+default synchronization context (the thread pool).  Unfortunately, this doesn't flow
+down the call stack, or even from call-to-call (thanks to the "Happy path" optimisation
+above, so it has to be specified on all applicable asynchronous calls.  In my code here,
+"Tusk<T>.UseDefaultScheduler()" does the same job.
+
+Another way around this would be to explicitly start your asynchronous operation in 
+another task.  By starting a new Task, all asynchronous actions on in will use the thread
+pool scheduler, rather than whatever current scheduler is defined - however, you'll
+lose the "happy path" optimisation as it MUST start executing on the thread pool. I
+haven't implemented sufficent code to see this work here.
+
+Some references:
+
+Reference sources for the real implementation:
+https://referencesource.microsoft.com/#mscorlib/system/runtime/compilerservices/TaskAwaiter.cs
+
+In depth look at async methods:
+https://devblogs.microsoft.com/premier-developer/dissecting-the-async-methods-in-c/
+
+Async method builder:
+http://blog.i3arnon.com/2016/07/25/arbitrary-async-returns/
+
+Example of generated code for the state machine:
+https://www.codeproject.com/Articles/535635/Async-Await-and-the-Generated-StateMachine
 

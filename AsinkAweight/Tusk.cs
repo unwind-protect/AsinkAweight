@@ -10,6 +10,7 @@ namespace AsinkAweight
     {
         private T _result;
         private Action _continuation;
+        private bool _useDefaultScheduler;
 
         public Aweighter<T> GetAwaiter()
         {
@@ -59,13 +60,22 @@ namespace AsinkAweight
 
         private void Queue(Action continuation)
         {
-            ActionScheduler.Current.Queue(continuation);
+            if (_useDefaultScheduler)
+                ActionScheduler.Default.Queue(continuation);
+            else
+                ActionScheduler.Current.Queue(continuation);
         }
         public static Tusk<T> FromResult(T val)
         {
             var tusk = new Tusk<T>();
             tusk.SetResult(val);
             return tusk;
+        }
+
+        public Tusk<T> UseDefaultScheduler()
+        {
+            _useDefaultScheduler = true;
+            return this;
         }
     }
 }
